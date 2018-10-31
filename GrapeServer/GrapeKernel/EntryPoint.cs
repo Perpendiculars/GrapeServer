@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GrapeKernel.ConnectionProcessors;
 
-namespace GrapeServer
+namespace GrapeKernel
 {
     public static class PhantomKernel
     {
