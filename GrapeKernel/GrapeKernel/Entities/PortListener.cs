@@ -1,5 +1,6 @@
 ﻿using System.Net.Sockets;
 using System.Net;
+using System.Threading.Tasks;
 
 
 namespace GrapeKernel.Entities
@@ -27,6 +28,13 @@ namespace GrapeKernel.Entities
         {
             var connection = ClientSocket.Accept();
             return connection;
+        }
+
+
+        public Task<Socket> Accept()
+        {
+            var task = this.ClientSocket.AcceptAsync();
+            return task;
         }
     }
 }

@@ -7,7 +7,8 @@ namespace GrapeKernel.Entities
     public class ConnectionModel
     {
         public Guid Id { get; }
-        public Socket ClientSocket { get; }
+        protected Socket ClientSocket { get; set; }
+        public NetworkStream Stream { get; private set; }
 
         public bool ReadingStatus
         {
@@ -30,7 +31,8 @@ namespace GrapeKernel.Entities
         public ConnectionModel(Socket clientSocket)
         {
             Id = Guid.NewGuid();
-            ClientSocket = clientSocket;
+            this.ClientSocket = clientSocket;
+            this.Stream = new NetworkStream(clientSocket);
         }
     }
 }

@@ -6,18 +6,19 @@ using System.Net.Sockets;
 using GrapeKernel.Entities;
 
 
-namespace GrapeKernel.ConnectionProcessors
+namespace GrapeKernel.SocketIO
 {
     sealed class SocketTransmitter : IDisposable
     {
         private readonly List<ConnectionModel> _connections;
         private readonly PortListener _listener;
 
-        public SocketTransmitter(int port, int maxConcurrency)
+
+        public SocketTransmitter(string ipAddres, int port, int maxConcurrency)
         {
             _connections = new List<ConnectionModel>();
             _listener = new PortListener(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-            _listener.Bind("127.0.0.1", 11000);
+            _listener.Bind(ipAddres, port);
             _listener.Listen(maxConcurrency);
             _connections.Add(_listener);
         }
@@ -33,7 +34,7 @@ namespace GrapeKernel.ConnectionProcessors
                     {
                         if (_connections[count].GetType() == typeof(PortListener))
                         {
-                            Socket newConnection = ((PortListener)_connections[count]).ClientSocket.Accept();
+                            Socket newConnection = await ((PortListener)_connections[count]).Accept();
                             var newClient = new ConnectionModel(newConnection);
                             _connections.Add(newClient);
                         }
@@ -55,14 +56,12 @@ namespace GrapeKernel.ConnectionProcessors
         }
 
 
-        public async Task SendAsync(ConnectionModel connection, string data)
+        /*public async Task SendAsync(ConnectionModel connection, byte[] data)
         {
-            var byteData = Encoding.UTF8.GetBytes(data);
-
             await Task.Factory.FromAsync(
                 connection.ClientSocket.BeginSend(byteData, 0, byteData.Length, SocketFlags.None, null, connection.ClientSocket),
                 connection.ClientSocket.EndSend).ConfigureAwait(false);
-        }
+        }*/
 
 
         public void Dispose()
